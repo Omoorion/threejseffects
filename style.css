@@ -1,0 +1,29 @@
+@import url("https://fonts.googleapis.com/css2?family=Bungee+Inline&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Bungee+Outline&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Train+One&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Monoton&display=swap");
+
+body {
+  margin: 0;
+  overflow-x: hidden;
+}
+
+.Robot-Inline {
+  font-family: "Bungee Inline", cursive;
+  color: red;
+}
+
+.Robot-Outline {
+  font-family: "Bungee Outline", cursive;
+  color: red;
+}
+
+.Robot-Train {
+  font-family: "Train One", cursive;
+  color: red;
+}
+
+.Robot-Monoton {
+  font-family: "Monoton", cursive;
+  color: red;
+}
