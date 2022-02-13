@@ -97,6 +97,17 @@ light.position.set(0, 0, 1)
 
 scene.add(light)
 
+const backLight = new THREE.DirectionalLight(0xFFFFFF, 1)
+
+backLight.position.set(0, 0, -1)
+
+scene.add(backLight)
+
+
+window.addEventListener('resize', function(event){
+    renderer.setSize(innerWidth, innerHeight) //size of the renderer in the html
+    renderer.setPixelRatio(devicePixelRatio)
+  });
 
 function animate() {
     requestAnimationFrame(animate)
