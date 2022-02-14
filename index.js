@@ -8,19 +8,19 @@ import * as TWEENMAX from 'https://cdnjs.cloudflare.com/ajax/libs/gsap/2.1.3/Twe
 const gui = new GUI()
 const world = {
     plane: {
-        width: 24,
-        height: 24,
-        widthSegments: 25,
-        heightSegments: 25
+        width: 400,
+        height: 400,
+        widthSegments: 50,
+        heightSegments: 50
     }
 }
-gui.add(world.plane, "width", 1, 50).onChange(generatePlane)
+gui.add(world.plane, "width", 1, 500).onChange(generatePlane)
 
-gui.add(world.plane, "height", 1, 50).onChange(generatePlane)
+gui.add(world.plane, "height", 1, 500).onChange(generatePlane)
 
-gui.add(world.plane, "widthSegments", 1, 50).onChange(generatePlane)
+gui.add(world.plane, "widthSegments", 1, 100).onChange(generatePlane)
 
-gui.add(world.plane, "heightSegments", 1, 50).onChange(generatePlane)
+gui.add(world.plane, "heightSegments", 1, 100).onChange(generatePlane)
 
 function generatePlane(){
     planeMesh.geometry.dispose()
@@ -29,14 +29,27 @@ function generatePlane(){
         world.plane.height,
         world.plane.widthSegments,
         world.plane.heightSegments)
-    const {array} = planeMesh.geometry.attributes.position
-    for(let i=0; i< array.length; i+=3){ //363 times
-    const x = array[i]
-    const y = array[i+1]
-    const z = array[i+2]
-    //randomally change the z of each point
-    array[i + 2] = z + Math.random()
-    }
+        const randomValues = []
+        const {array} = planeMesh.geometry.attributes.position
+        for(let i=0; i< array.length; i++){ //363 times
+            if (i % 3 === 0) {
+                const x = array[i]
+                const y = array[i+1]
+                const z = array[i+2]
+            //randomally change the z of each point
+                array[i + 2] = z + (Math.random() - 0.5) * 3
+                array[i+1] = y + (Math.random() - 0.5) * 3
+                array[i] = x + (Math.random() - 0.5) * 3
+            }
+        
+            randomValues.push(Math.random() * Math.PI * 2)
+        
+        }
+        
+        planeMesh.geometry.attributes.position.randomValues = randomValues
+        
+        planeMesh.geometry.attributes.position.originalPosition = planeMesh.geometry.attributes.position.array 
+        
     
     const colors = []
     for(let i=0; i<planeMesh.geometry.attributes.position.count; i++){
@@ -74,7 +87,7 @@ new OrbitControls(camera, renderer.domElement) //ROTATES CAMERA, NOT OBJECT, NOT
 
 // scene.add(mesh)
 
-camera.position.z = 5
+camera.position.z = 50
 
 const planeGeometry = new THREE.PlaneGeometry(world.plane.width, world.plane.height, world.plane.widthSegments, world.plane.heightSegments)
 //DoubleSide makes both sides visible and not just one
@@ -88,18 +101,30 @@ const planeMaterial = new THREE.MeshPhongMaterial({
     vertexColors: true
 })
 const planeMesh = new THREE.Mesh(planeGeometry, planeMaterial)
-
+generatePlane()
 scene.add(planeMesh)
 
 console.log(planeMesh.geometry.attributes.position.array) //the array of points on the plane, defining it's shape
+const randomValues = []
 const {array} = planeMesh.geometry.attributes.position
-for(let i=0; i< array.length; i+=3){ //363 times
-    const x = array[i]
-    const y = array[i+1]
-    const z = array[i+2]
+for(let i=0; i< array.length; i++){ //363 times
+    if (i % 3 === 0) {
+        const x = array[i]
+        const y = array[i+1]
+        const z = array[i+2]
     //randomally change the z of each point
-    array[i + 2] = z + Math.random()
+        array[i + 2] = z + (Math.random() - 0.5) * 3
+        array[i+1] = y + (Math.random() - 0.5) * 3
+        array[i] = x + (Math.random() - 0.5) * 3
+    }
+
+    randomValues.push(Math.random() * Math.PI * 2)
+
 }
+
+planeMesh.geometry.attributes.position.randomValues = randomValues
+
+planeMesh.geometry.attributes.position.originalPosition = planeMesh.geometry.attributes.position.array 
 
 const colors = []
 for(let i=0; i<planeMesh.geometry.attributes.position.count; i++){
@@ -112,7 +137,7 @@ planeMesh.geometry.setAttribute('color', new THREE.BufferAttribute(new Float32Ar
 
 const light = new THREE.DirectionalLight(0xFFFFFF, 1)
 
-light.position.set(0, 0, 1)
+light.position.set(0, -1, 1)
 
 scene.add(light)
 
@@ -132,11 +157,22 @@ const mouse = {
     x: undefined,
     y:undefined
 }
-
+let frame = 0
 function animate() {
     requestAnimationFrame(animate)
     renderer.render(scene, camera)
     raycaster.setFromCamera(mouse, camera)
+    frame+=0.01
+    const {array, originalPosition, randomValues} = planeMesh.geometry.attributes.position
+    for (let i = 0; i<array.length; i+=3){
+        //x
+        array[i] = originalPosition[i] + Math.cos(frame + randomValues[i]) * 0.005
+        //y
+        array[i + 1] = originalPosition[i + 1] + Math.sin(frame + randomValues[i + 1]) * 0.005
+    }
+    planeMesh.geometry.attributes.position.needsUpdate = true
+
+
     const intersects = raycaster.intersectObject(planeMesh)
     if(intersects.length>0) {
         const {color} = intersects[0].object.geometry.attributes
