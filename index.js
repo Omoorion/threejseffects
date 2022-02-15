@@ -166,9 +166,9 @@ function animate() {
     const {array, originalPosition, randomValues} = planeMesh.geometry.attributes.position
     for (let i = 0; i<array.length; i+=3){
         //x
-        array[i] = originalPosition[i] + Math.cos(frame + randomValues[i]) * 0.005
+        array[i] = originalPosition[i] + Math.cos(frame + randomValues[i]) * 0.01
         //y
-        array[i + 1] = originalPosition[i + 1] + Math.sin(frame + randomValues[i + 1]) * 0.005
+        array[i + 1] = originalPosition[i + 1] + Math.sin(frame + randomValues[i + 1]) * 0.01
     }
     planeMesh.geometry.attributes.position.needsUpdate = true
 
