@@ -1,2 +1,2 @@
-
-Site Link: https://omoorion.github.io/threejseffects/
+# ThreeJsEffects:
+### Link: [Click here](https://omoorion.github.io/threejseffects/)
